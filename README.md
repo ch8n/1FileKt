@@ -1,3 +1,6 @@
+# 1FileKt
+Feed your entire codebase to GPTs/LLM. 1 file for your entire codebase ingestion.
+
 # How to use
 
 ```kotlin
