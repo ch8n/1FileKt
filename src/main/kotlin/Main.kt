@@ -13,18 +13,23 @@ class OneFile() {
     ): File {
         if (!rootDirectory.isDirectory) throw IllegalArgumentException("The provided path is not a directory.")
 
-        val excludePatterns = ignorePatterns.filter { !it.startsWith("!") }
+        val excludePatterns = ignorePatterns
+            .filter { !it.startsWith("!") }
             .map { adjustPattern(it) }
-        val includePatterns = ignorePatterns.filter { it.startsWith("!") }
+
+        val includePatterns = ignorePatterns
+            .filter { it.startsWith("!") }
             .map { adjustPattern(it.removePrefix("!")) }
 
-        val excludeMatchers = excludePatterns.map { pattern ->
-            FileSystems.getDefault().getPathMatcher("glob:$pattern")
-        }
+        val excludeMatchers = excludePatterns
+            .map { pattern ->
+                FileSystems.getDefault().getPathMatcher("glob:$pattern")
+            }
 
-        val includeMatchers = includePatterns.map { pattern ->
-            FileSystems.getDefault().getPathMatcher("glob:$pattern")
-        }
+        val includeMatchers = includePatterns
+            .map { pattern ->
+                FileSystems.getDefault().getPathMatcher("glob:$pattern")
+            }
 
         var fileCount = 0
         var directoryCount = 0
@@ -99,7 +104,7 @@ class OneFile() {
     /**
      * Adjusts the pattern to ensure directories are fully excluded by appending '**' if needed.
      */
-    fun adjustPattern(pattern: String): String {
+    private fun adjustPattern(pattern: String): String {
         return if (pattern.endsWith("/")) {
             "${pattern}**"
         } else {
@@ -111,7 +116,7 @@ class OneFile() {
      * Generates a directory structure string similar to the `tree` command,
      * respecting the exclusion and inclusion patterns.
      */
-    fun getDirectoryStructure(
+    private fun getDirectoryStructure(
         currentPath: java.nio.file.Path,
         rootPath: java.nio.file.Path,
         excludeMatchers: List<PathMatcher>,
@@ -156,7 +161,7 @@ class OneFile() {
      * Determines whether a given path should be excluded based on the excludeMatchers and includeMatchers.
      * Inclusion patterns (!patterns) override exclusion patterns.
      */
-    fun isExcluded(
+    private fun isExcluded(
         path: java.nio.file.Path,
         rootPath: java.nio.file.Path,
         excludeMatchers: List<PathMatcher>,
@@ -175,7 +180,7 @@ class OneFile() {
 }
 
 
-fun main() {
+fun main1() {
     val rootDirectoryPath = "/Users/chetan.gupta/Desktop/ch8n/rough/1fileKt"
     val rootDirectory = File(rootDirectoryPath)
     val ignorePatterns = mutableListOf<String>(
@@ -199,6 +204,24 @@ fun main() {
         "nbproject/private/", "nbbuild/", "dist/", "nbdist/", ".nb-gradle/",
         ".vscode/",
         ".DS_Store"
+    )
+    val oneFile = OneFile()
+    val outputFile = oneFile.execute(rootDirectory, ignorePatterns)
+    print(outputFile.readText())
+}
+
+fun main() {
+    val rootDirectoryPath = "/Users/chetan.gupta/Desktop/ch8n/Ixigo-domain-sdk"
+    val rootDirectory = File(rootDirectoryPath)
+    val ignorePatterns = mutableListOf<String>(
+        ".fleet/", ".github/", ".gradle/", ".husky/", ".idea/",
+        ".kotlin/", "build/", "**/.gradle/", "**/build/",
+        "iosApp/", "kmp-xcframework-dest/", "node_modules/", ".editorconfig",
+        ".env", ".gitignore", "gradle.properties", "gradlew",
+        "gradlew.bat", "LICENSE", "list.json", "local.properties",
+        "package-lock.json", "README.md", "yarn.lock", ".git/",
+        "gradle/", ".DS_Store", "**/resources/", "composeApp/",
+        "**.podspec",
     )
     val oneFile = OneFile()
     val outputFile = oneFile.execute(rootDirectory, ignorePatterns)
