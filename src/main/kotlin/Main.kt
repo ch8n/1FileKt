@@ -4,10 +4,12 @@ import java.nio.file.PathMatcher
 
 
 class OneFile() {
+
     fun execute(
         rootDirectory: File,
         ignorePatterns: List<String>,
-        outfileName: String = "oneFile.md"
+        outputDirectoryPath: String = "src/main/resources",
+        outfileName: String = "${rootDirectory.name}.md"
     ): File {
         if (!rootDirectory.isDirectory) throw IllegalArgumentException("The provided path is not a directory.")
 
@@ -29,7 +31,7 @@ class OneFile() {
         var totalLines = 0
         var totalWords = 0
 
-        val outputFile = File(rootDirectory, outfileName)
+        val outputFile = File(outputDirectoryPath, outfileName)
         outputFile.bufferedWriter().use { writer ->
             // Write directory structure
             writer.write("============\n")
@@ -174,8 +176,8 @@ class OneFile() {
 
 
 fun main() {
-    val directoryPath = "/Users/chetan.gupta/Desktop/ch8n/rough/1fileKt"
-    val rootDirectory = File(directoryPath)
+    val rootDirectoryPath = "/Users/chetan.gupta/Desktop/ch8n/rough/1fileKt"
+    val rootDirectory = File(rootDirectoryPath)
     val ignorePatterns = mutableListOf<String>(
         "merged_content.md",
         "**/build/", // Exclude all build directories
